@@ -1,5 +1,6 @@
 ---
-title: "Names Ending with 'i'"
+title: "Names Ending With 'i'"
+author: "Avery Zheng"
 format: html
 editor: visual
 ---
@@ -10,15 +11,26 @@ editor: visual
 library(tidyverse)
 library(ggplot2)
 read_csv("data/i_names.csv") |>
-  mutate(n_per_mil = prop*1000000) |>
-  select(year, sex, n_per_mil) |>
-  summarize(num_per_mil = sum(n_per_mil), .by = c(year, sex)) |>
-  filter(year >= 1900) |>
-  ggplot(aes(x = year, y = num_per_mil, group = sex, fill = sex)) +
-  geom_area() +
-  labs(x = "", y = "",
-       group = "Sex", fill = "Sex") +
-  scale_x_continuous(breaks = seq(1900, 2016, by = 4)) +
-  scale_y_continuous(breaks = seq(0, 60000, by = 4000)) +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+  select(year, sex, prop) |>
+  summarize(prop = sum(prop), .by = c(year, sex)) |>
+  filter(year >= 1900) -> data
 ```
+
+```{r}
+#| echo: false
+data |>
+ggplot(aes(x = year, y = prop, group = sex, fill = sex)) +
+geom_area() +
+labs(x = "", y = "",
+     group = "Sex", fill = "Sex",
+     subtitle = "The percentage of babies with names ending with 'i' increased dramatically",
+     title = "Percent of Names Ending With 'i' by Year in the U.S",
+     caption = "Source: 'babynames' Package in R") +
+scale_x_continuous(breaks = seq(1900, 2016, by = 4)) +
+scale_y_continuous(breaks = seq(0, 0.1, by = 0.005),
+                   labels = scales::percent_format()) +
+theme_minimal() +
+theme(axis.text.x = element_text(angle = 90, hjust = 1),
+      panel.spacing = unit(c(0, 0, 0, 0), "cm"))
+```
+
